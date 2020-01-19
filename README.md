@@ -1,75 +1,46 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Open Remote Backend Server
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Deze repository is bewijslast voor het opzetten en maken van de backend die dient voor het aanleveren van data aan de web app. 
 
-## Description
+## Informatie
+![<image>](https://drive.google.com/file/d/12hLz_GjAC9WZ3gp2XTI1yqpEfo-KdNjn/preview)
+Voor de crowd control applicatie is realtime data nodig. Deze data wordt 
+verzameld door telefoons. De data die wordt opgehaald (locatie, snelheid en richting) wordt opgeslagen in een database. Deze server zorgt ervoor dat wanneer er een verandering is in de database er een seintje wordt verstuurd naar de crowd control applicatie met de nieuwe data.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+De server maakt gebruik van een Nodejs framework genaamd [Nestjs](http://nestjs.com). Dit is een framework om servers in Nodejs te maken. Naast dit wordt er gebruik gemaakt van Socket.io om de data realtime te verzenden naar de crowd control applicatie.
 
-## Installation
+```javascript
+const changeStream = this.locationModel.watch().on('change', change => {
+    this.onPositionDataChangedDispatcher.dispatch(this, change);
+});
+
+this.locationService.onPositionDataChanged.subscribe((sender, location) => {
+    Logger.log('position data changed, broadcasting...');
+    this.server.emit('newData', location.fullDocument);
+});
+```
+Bovenstaand stukje code kijk naar veranderingen in de database en zodra er een verandering is een event triggert die dan weer data naar de crowd control applicatie wordt gestuurd
+    
+
+## Hoe start ik de server op
+
+
+### Installatie
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+### Opstarten van de server
 
 ```bash
-# development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
+## Integratie
+Om de server makkelijk te kunnen integreren met de crowd control applicatie is er in [Heroku](http://heroku.com) een project aangemaakt. Als er veranderingen zijn op de master branch dan worden deze direct online ook verandert.
 
-```bash
-# unit tests
-$ npm run test
+De server kan worden bereikt via de volgende url:
+[https://openremote-server.herokuapp.com/](https://openremote-server.herokuapp.com/)
 
-# e2e tests
-$ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
